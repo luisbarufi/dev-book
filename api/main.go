@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/src/config"
 	"api/src/router"
 	"fmt"
 	"log"
@@ -8,9 +9,10 @@ import (
 )
 
 func main() {
-	fmt.Println("Rodando API!")
+	config.LoadEnv()
 
+	fmt.Println("Rodando API!")
 	r := router.Generate()
 
-	log.Fatal(http.ListenAndServe(":3333", r))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
