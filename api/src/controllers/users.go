@@ -86,6 +86,11 @@ func ShowUser(w http.ResponseWriter, r *http.Request) {
 		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
 	}
 
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	response_handler.JSON(w, http.StatusOK, user)
 }
 
