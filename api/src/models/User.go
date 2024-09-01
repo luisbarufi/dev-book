@@ -15,8 +15,8 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt,omitempty"`
 }
 
-func (user *User) PrepareValidation() error {
-	if err := user.validate(); err != nil {
+func (user *User) PrepareValidation(step string) error {
+	if err := user.validate(step); err != nil {
 		return err
 	}
 
@@ -24,7 +24,7 @@ func (user *User) PrepareValidation() error {
 	return nil
 }
 
-func (user *User) validate() error {
+func (user *User) validate(step string) error {
 	if user.Name == "" {
 		return errors.New("o nome é obrigatório e não pode estar em branco")
 	}
@@ -37,7 +37,7 @@ func (user *User) validate() error {
 		return errors.New("o email é obrigatório e não pode estar em branco")
 	}
 
-	if user.Password == "" {
+	if step == "register" && user.Password == "" {
 		return errors.New("a senha é obrigatório e não pode estar em branco")
 	}
 
