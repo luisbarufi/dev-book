@@ -117,7 +117,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if userId != userIdInToken {
-		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível autalizar um usuário que não seja o seu"))
+		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível atualizar um usuário que não seja o seu"))
 		return
 	}
 
@@ -160,6 +160,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIdInToken, err := auth.ExtractUserId(r)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != userIdInToken {
+		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível deletar um usuário que não seja o seu"))
 		return
 	}
 
