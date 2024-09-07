@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"api/src/auth"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/response_handler"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
@@ -105,6 +107,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIdInToken, err := auth.ExtractUserId(r)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != userIdInToken {
+		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível autalizar um usuário que não seja o seu"))
 		return
 	}
 
