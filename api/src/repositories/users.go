@@ -41,7 +41,7 @@ func (repository *users) Search(searchParameter string) ([]models.User, error) {
 	searchParameter = fmt.Sprintf("%%%s%%", searchParameter) // %searchParameter%
 
 	rows, err := repository.db.Query(
-		"select id, name, nick, email, createdAt from users where name LIKE ? or nick LIKE ?",
+		"select id, name, nick, email, created_at from users where name LIKE ? or nick LIKE ?",
 		searchParameter,
 		searchParameter,
 	)
@@ -60,7 +60,7 @@ func (repository *users) Search(searchParameter string) ([]models.User, error) {
 			&user.Name,
 			&user.Nick,
 			&user.Email,
-			&user.CreatedAt,
+			&user.Created_at,
 		); err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func (repository *users) Search(searchParameter string) ([]models.User, error) {
 
 func (repository *users) SearchById(Id uint64) (models.User, error) {
 	rows, err := repository.db.Query(
-		"select id, name, nick, email, createdAt from users where id = ?",
+		"select id, name, nick, email, created_at from users where id = ?",
 		Id,
 	)
 	if err != nil {
@@ -89,7 +89,7 @@ func (repository *users) SearchById(Id uint64) (models.User, error) {
 			&user.Name,
 			&user.Nick,
 			&user.Email,
-			&user.CreatedAt,
+			&user.Created_at,
 		); err != nil {
 			return models.User{}, err
 		}
