@@ -170,3 +170,34 @@ func (repository *users) UnFollow(userId, followerId uint64) error {
 
 	return nil
 }
+
+func (repository *users) SearchFollowers(userId uint64) ([]models.User, error) {
+	rows, err := repository.db.Query(
+		`select u.id, u.name, u.nick, u.email, u.created_at
+		from users u inner join followers s on u.id = s.follower_id where s.user_id = ?`,
+		userId,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var followers []models.User
+	for rows.Next() {
+		var follower models.User
+
+		if err := rows.Scan(
+			&follower.ID,
+			&follower.Name,
+			&follower.Nick,
+			&follower.Email,
+			&follower.Created_at,
+		); err != nil {
+			return nil, err
+		}
+
+		followers = append(followers, follower)
+	}
+
+	return followers, nil
+}
