@@ -6,6 +6,7 @@ import (
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/response_handler"
+	"api/src/security"
 	"encoding/json"
 	"errors"
 	"io"
@@ -308,4 +309,69 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response_handler.JSON(w, http.StatusOK, users)
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	userIdInToken, err := auth.ExtractUserId(r)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+	userId, err := strconv.ParseUint(params["userId"], 10, 64)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if userIdInToken != userId {
+		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível atualizar a senha de um usuário que não é o seu"))
+		return
+	}
+
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var password models.Password
+
+	if err = json.Unmarshal(requestBody, &password); err != nil {
+		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+	passwordSaved, err := repository.GetSavedPassword(userId)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = security.VerifyPassword(passwordSaved, password.CurrentPassword); err != nil {
+		response_handler.ErrorHandler(w, http.StatusUnauthorized, errors.New("a senha atual não condiz coma a que está salva no banco"))
+		return
+	}
+
+	hashedPassword, err := security.Hash(password.NewPassword)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = repository.UpdatePassword(userId, string(hashedPassword)); err != nil {
+		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response_handler.JSON(w, http.StatusNoContent, nil)
 }

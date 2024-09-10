@@ -60,12 +60,12 @@ func (user *User) format(step string) error {
 	user.Email = strings.TrimSpace(user.Email)
 
 	if step == "register" {
-		passwordHash, err := security.Hash(user.Password)
+		hashedPassword, err := security.Hash(user.Password)
 		if err != nil {
 			return err
 		}
 
-		user.Password = string(passwordHash)
+		user.Password = string(hashedPassword)
 	}
 
 	return nil

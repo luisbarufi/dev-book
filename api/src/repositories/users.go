@@ -6,15 +6,15 @@ import (
 	"fmt"
 )
 
-type users struct {
+type Users struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *users {
-	return &users{db}
+func NewUserRepository(db *sql.DB) *Users {
+	return &Users{db}
 }
 
-func (repository *users) Create(user models.User) (uint64, error) {
+func (repository Users) Create(user models.User) (uint64, error) {
 	statement, err := repository.db.Prepare(
 		"INSERT INTO users (name, nick, email, password) VALUES (?, ?, ?, ?)",
 	)
@@ -37,7 +37,7 @@ func (repository *users) Create(user models.User) (uint64, error) {
 	return uint64(lastInsertedId), nil
 }
 
-func (repository *users) Search(searchParameter string) ([]models.User, error) {
+func (repository Users) Search(searchParameter string) ([]models.User, error) {
 	searchParameter = fmt.Sprintf("%%%s%%", searchParameter) // %searchParameter%
 
 	rows, err := repository.db.Query(
@@ -71,7 +71,7 @@ func (repository *users) Search(searchParameter string) ([]models.User, error) {
 	return users, nil
 }
 
-func (repository *users) SearchById(Id uint64) (models.User, error) {
+func (repository Users) SearchById(Id uint64) (models.User, error) {
 	rows, err := repository.db.Query(
 		"select id, name, nick, email, created_at from users where id = ?",
 		Id,
@@ -98,7 +98,7 @@ func (repository *users) SearchById(Id uint64) (models.User, error) {
 	return user, nil
 }
 
-func (repository *users) Update(Id uint64, user models.User) error {
+func (repository Users) Update(Id uint64, user models.User) error {
 	statement, err := repository.db.Prepare("update users set name = ?, nick = ?, email = ? where id = ?")
 	if err != nil {
 		return err
@@ -112,7 +112,7 @@ func (repository *users) Update(Id uint64, user models.User) error {
 	return nil
 }
 
-func (repository *users) Delete(Id uint64) error {
+func (repository Users) Delete(Id uint64) error {
 	statement, err := repository.db.Prepare("delete from users where id = ?")
 	if err != nil {
 		return err
@@ -126,7 +126,7 @@ func (repository *users) Delete(Id uint64) error {
 	return nil
 }
 
-func (repository *users) SearchByEmail(email string) (models.User, error) {
+func (repository Users) SearchByEmail(email string) (models.User, error) {
 	row, err := repository.db.Query("select id, password from users where email = ?", email)
 	if err != nil {
 		return models.User{}, err
@@ -143,7 +143,7 @@ func (repository *users) SearchByEmail(email string) (models.User, error) {
 	return user, nil
 }
 
-func (repository *users) Follow(userId, followerId uint64) error {
+func (repository Users) Follow(userId, followerId uint64) error {
 	statement, err := repository.db.Prepare("insert ignore into followers (user_id, follower_id) values (?, ?)")
 	if err != nil {
 		return err
@@ -157,7 +157,7 @@ func (repository *users) Follow(userId, followerId uint64) error {
 	return nil
 }
 
-func (repository *users) UnFollow(userId, followerId uint64) error {
+func (repository Users) UnFollow(userId, followerId uint64) error {
 	statement, err := repository.db.Prepare("delete from followers where user_id = ? and follower_id = ?")
 	if err != nil {
 		return err
@@ -171,7 +171,7 @@ func (repository *users) UnFollow(userId, followerId uint64) error {
 	return nil
 }
 
-func (repository *users) SearchFollowers(userId uint64) ([]models.User, error) {
+func (repository Users) SearchFollowers(userId uint64) ([]models.User, error) {
 	rows, err := repository.db.Query(
 		`select u.id, u.name, u.nick, u.email, u.created_at
 		from users u inner join followers s on u.id = s.follower_id where s.user_id = ?`,
@@ -202,7 +202,7 @@ func (repository *users) SearchFollowers(userId uint64) ([]models.User, error) {
 	return followers, nil
 }
 
-func (repository *users) SearchFollowing(userId uint64) ([]models.User, error) {
+func (repository Users) SearchFollowing(userId uint64) ([]models.User, error) {
 	rows, err := repository.db.Query(
 		`select u.id, u.name, u.nick, u.email, u.created_at
 		from users u inner join followers s on u.id = s.user_id where s.follower_id = ?`,
@@ -231,4 +231,36 @@ func (repository *users) SearchFollowing(userId uint64) ([]models.User, error) {
 	}
 
 	return users, nil
+}
+
+func (repository Users) GetSavedPassword(userId uint64) (string, error) {
+	row, err := repository.db.Query("select password from users where id = ?", userId)
+	if err != nil {
+		return "", err
+	}
+	defer row.Close()
+
+	var user models.User
+
+	if row.Next() {
+		if err = row.Scan(&user.Password); err != nil {
+			return "", err
+		}
+	}
+
+	return user.Password, nil
+}
+
+func (repository Users) UpdatePassword(userId uint64, password string) error {
+	statement, err := repository.db.Prepare("update users set password = ? where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(password, userId); err != nil {
+		return err
+	}
+
+	return nil
 }
