@@ -32,6 +32,11 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 
 	publication.Author_id = userId
 
+	if err = publication.PrepareValidation(); err != nil {
+		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
 	db, err := database.Connect()
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)

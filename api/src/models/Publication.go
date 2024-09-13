@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
 type Publication struct {
 	ID          uint64    `json:"id,omitempty"`
@@ -10,4 +14,30 @@ type Publication struct {
 	Author_nick string    `json:"author_nick,omitempty"`
 	Likes       uint64    `json:"like"`
 	Created_at  time.Time `json:"created_at,omitempty"`
+}
+
+func (publication *Publication) PrepareValidation() error {
+	if err := publication.validate(); err != nil {
+		return err
+	}
+
+	publication.format()
+	return nil
+}
+
+func (publication *Publication) validate() error {
+	if publication.Title == "" {
+		return errors.New("o título é obrigatório e não pode estar em branco")
+	}
+
+	if publication.Content == "" {
+		return errors.New("o conteúdo é obrigatório e não pode estar em branco")
+	}
+
+	return nil
+}
+
+func (publication *Publication) format() {
+	publication.Title = strings.TrimSpace(publication.Title)
+	publication.Content = strings.TrimSpace(publication.Content)
 }
