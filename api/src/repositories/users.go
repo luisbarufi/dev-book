@@ -21,7 +21,6 @@ func (repository Users) Create(user models.User) (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	defer statement.Close()
 
 	result, err := statement.Exec(user.Name, user.Nick, user.Email, user.Password)
