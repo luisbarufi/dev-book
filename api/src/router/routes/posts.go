@@ -9,31 +9,31 @@ var postsRoutes = []Route{
 	{
 		URI:                    "/posts",
 		Method:                 http.MethodPost,
-		Function:               controllers.CreatePost,
+		Function:               controllers.Create,
 		RequiresAuthentication: true,
 	},
 	{
 		URI:                    "/posts",
 		Method:                 http.MethodGet,
-		Function:               controllers.GetPosts,
+		Function:               controllers.List,
 		RequiresAuthentication: true,
 	},
 	{
 		URI:                    "/posts/{postId}",
 		Method:                 http.MethodGet,
-		Function:               controllers.ShowPost,
+		Function:               controllers.Show,
 		RequiresAuthentication: true,
 	},
 	{
 		URI:                    "/posts/{postId}",
 		Method:                 http.MethodPut,
-		Function:               controllers.UpdatePost,
+		Function:               controllers.Update,
 		RequiresAuthentication: true,
 	},
 	{
 		URI:                    "/posts/{postId}",
 		Method:                 http.MethodDelete,
-		Function:               controllers.DeletePost,
+		Function:               controllers.Delete,
 		RequiresAuthentication: true,
 	},
 }

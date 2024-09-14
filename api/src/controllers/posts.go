@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreatePost(w http.ResponseWriter, r *http.Request) {
+func Create(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.ExtractUserId(r)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
@@ -57,11 +57,11 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	response_handler.JSON(w, http.StatusCreated, post)
 }
 
-func GetPosts(w http.ResponseWriter, r *http.Request) {
+func List(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ShowPost(w http.ResponseWriter, r *http.Request) {
+func Show(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	postId, err := strconv.ParseUint(params["postId"], 10, 64)
@@ -92,10 +92,10 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 	response_handler.JSON(w, http.StatusOK, post)
 }
 
-func UpdatePost(w http.ResponseWriter, r *http.Request) {
+func Update(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func DeletePost(w http.ResponseWriter, r *http.Request) {
+func Delete(w http.ResponseWriter, r *http.Request) {
 
 }
