@@ -88,7 +88,7 @@ func ShowUser(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewUserRepository(db)
-	user, err := repository.SearchById(userId)
+	user, err := repository.FindById(userId)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
