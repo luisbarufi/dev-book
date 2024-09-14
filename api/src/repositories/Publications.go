@@ -5,24 +5,24 @@ import (
 	"database/sql"
 )
 
-type Publications struct {
+type Posts struct {
 	db *sql.DB
 }
 
-func NewPublicationsRepository(db *sql.DB) *Publications {
-	return &Publications{db}
+func NewPostsRepository(db *sql.DB) *Posts {
+	return &Posts{db}
 }
 
-func (repository Publications) Create(publication models.Publication) (uint64, error) {
+func (repository Posts) Create(post models.Post) (uint64, error) {
 	statement, err := repository.db.Prepare(
-		"insert into publications (title, content, author_id) VALUES (?, ?, ?)",
+		"insert into posts (title, content, author_id) VALUES (?, ?, ?)",
 	)
 	if err != nil {
 		return 0, err
 	}
 	defer statement.Close()
 
-	result, err := statement.Exec(publication.Title, publication.Content, publication.Author_id)
+	result, err := statement.Exec(post.Title, post.Content, post.Author_id)
 	if err != nil {
 		return 0, err
 	}
@@ -35,31 +35,31 @@ func (repository Publications) Create(publication models.Publication) (uint64, e
 	return uint64(lastInsertedId), nil
 }
 
-func (repository Publications) FindById(publicationId uint64) (models.Publication, error) {
+func (repository Posts) FindById(postId uint64) (models.Post, error) {
 	row, err := repository.db.Query(
-		`select p.*, u.nick from publications p inner join users u on u.id = p.author_id where p.id = ?`,
-		publicationId,
+		`select p.*, u.nick from posts p inner join users u on u.id = p.author_id where p.id = ?`,
+		postId,
 	)
 	if err != nil {
-		return models.Publication{}, err
+		return models.Post{}, err
 	}
 	defer row.Close()
 
-	var publication models.Publication
+	var post models.Post
 
 	if row.Next() {
 		if err = row.Scan(
-			&publication.ID,
-			&publication.Title,
-			&publication.Content,
-			&publication.Author_id,
-			&publication.Likes,
-			&publication.Created_at,
-			&publication.Author_nick,
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.Author_id,
+			&post.Likes,
+			&post.Created_at,
+			&post.Author_nick,
 		); err != nil {
-			return models.Publication{}, err
+			return models.Post{}, err
 		}
 	}
 
-	return publication, nil
+	return post, nil
 }

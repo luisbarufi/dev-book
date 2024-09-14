@@ -14,7 +14,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreatePublication(w http.ResponseWriter, r *http.Request) {
+func CreatePost(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.ExtractUserId(r)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
@@ -27,15 +27,15 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var publication models.Publication
-	if err = json.Unmarshal(requestBody, &publication); err != nil {
+	var post models.Post
+	if err = json.Unmarshal(requestBody, &post); err != nil {
 		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
-	publication.Author_id = userId
+	post.Author_id = userId
 
-	if err = publication.PrepareValidation(); err != nil {
+	if err = post.PrepareValidation(); err != nil {
 		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
@@ -47,24 +47,24 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repository := repositories.NewPublicationsRepository(db)
-	publication.ID, err = repository.Create(publication)
+	repository := repositories.NewPostsRepository(db)
+	post.ID, err = repository.Create(post)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusCreated, publication)
+	response_handler.JSON(w, http.StatusCreated, post)
 }
 
-func GetPublications(w http.ResponseWriter, r *http.Request) {
+func GetPosts(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ShowPublication(w http.ResponseWriter, r *http.Request) {
+func ShowPost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	publicationId, err := strconv.ParseUint(params["publicationId"], 10, 64)
+	postId, err := strconv.ParseUint(params["postId"], 10, 64)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
@@ -77,25 +77,25 @@ func ShowPublication(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repository := repositories.NewPublicationsRepository(db)
-	publication, err := repository.FindById(publicationId)
+	repository := repositories.NewPostsRepository(db)
+	post, err := repository.FindById(postId)
 	if err != nil {
 		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	if publication.ID == 0 {
+	if post.ID == 0 {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusOK, publication)
+	response_handler.JSON(w, http.StatusOK, post)
 }
 
-func UpdatePublication(w http.ResponseWriter, r *http.Request) {
+func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func DeletePublication(w http.ResponseWriter, r *http.Request) {
+func DeletePost(w http.ResponseWriter, r *http.Request) {
 
 }

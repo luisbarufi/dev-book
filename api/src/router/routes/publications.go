@@ -5,35 +5,35 @@ import (
 	"net/http"
 )
 
-var publicationsRoutes = []Route{
+var postsRoutes = []Route{
 	{
-		URI:                    "/publications",
+		URI:                    "/posts",
 		Method:                 http.MethodPost,
-		Function:               controllers.CreatePublication,
+		Function:               controllers.CreatePost,
 		RequiresAuthentication: true,
 	},
 	{
-		URI:                    "/publications",
+		URI:                    "/posts",
 		Method:                 http.MethodGet,
-		Function:               controllers.GetPublications,
+		Function:               controllers.GetPosts,
 		RequiresAuthentication: true,
 	},
 	{
-		URI:                    "/publications/{publicationId}",
+		URI:                    "/posts/{postId}",
 		Method:                 http.MethodGet,
-		Function:               controllers.ShowPublication,
+		Function:               controllers.ShowPost,
 		RequiresAuthentication: true,
 	},
 	{
-		URI:                    "/publications/{publicationId}",
+		URI:                    "/posts/{postId}",
 		Method:                 http.MethodPut,
-		Function:               controllers.UpdatePublication,
+		Function:               controllers.UpdatePost,
 		RequiresAuthentication: true,
 	},
 	{
-		URI:                    "/publications/{publicationId}",
+		URI:                    "/posts/{postId}",
 		Method:                 http.MethodDelete,
-		Function:               controllers.DeletePublication,
+		Function:               controllers.DeletePost,
 		RequiresAuthentication: true,
 	},
 }

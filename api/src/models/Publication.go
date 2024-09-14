@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type Publication struct {
+type Post struct {
 	ID          uint64    `json:"id,omitempty"`
 	Title       string    `json:"title,omitempty"`
 	Content     string    `json:"content,omitempty"`
@@ -16,28 +16,28 @@ type Publication struct {
 	Created_at  time.Time `json:"created_at,omitempty"`
 }
 
-func (publication *Publication) PrepareValidation() error {
-	if err := publication.validate(); err != nil {
+func (post *Post) PrepareValidation() error {
+	if err := post.validate(); err != nil {
 		return err
 	}
 
-	publication.format()
+	post.format()
 	return nil
 }
 
-func (publication *Publication) validate() error {
-	if publication.Title == "" {
+func (post *Post) validate() error {
+	if post.Title == "" {
 		return errors.New("o título é obrigatório e não pode estar em branco")
 	}
 
-	if publication.Content == "" {
+	if post.Content == "" {
 		return errors.New("o conteúdo é obrigatório e não pode estar em branco")
 	}
 
 	return nil
 }
 
-func (publication *Publication) format() {
-	publication.Title = strings.TrimSpace(publication.Title)
-	publication.Content = strings.TrimSpace(publication.Content)
+func (post *Post) format() {
+	post.Title = strings.TrimSpace(post.Title)
+	post.Content = strings.TrimSpace(post.Content)
 }
