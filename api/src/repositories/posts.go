@@ -63,3 +63,36 @@ func (repository Posts) FindById(postId uint64) (models.Post, error) {
 
 	return post, nil
 }
+
+func (repository Posts) ListPosts(userId uint64) ([]models.Post, error) {
+	rows, err := repository.db.Query(
+		`select distinct p.*, u.nick from posts p inner join users u on u.id = p.author_id inner join followers s on p.author_id = s.user_id 
+		where u.id = ? or s.follower_id = ?	order by 1 desc`, userId, userId,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+
+	for rows.Next() {
+		var post models.Post
+
+		if err = rows.Scan(
+			&post.ID,
+			&post.Title,
+			&post.Content,
+			&post.Author_id,
+			&post.Likes,
+			&post.Created_at,
+			&post.Author_nick,
+		); err != nil {
+			return nil, err
+		}
+
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
