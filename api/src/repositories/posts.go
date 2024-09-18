@@ -98,13 +98,27 @@ func (repository Posts) ListPosts(userId uint64) ([]models.Post, error) {
 }
 
 func (repository Posts) UpdatePost(postId uint64, post models.Post) error {
-	statement, err := repository.db.Prepare("update posts set title = ?, content = ? where id =?")
+	statement, err := repository.db.Prepare("update posts set title = ?, content = ? where id = ?")
 	if err != nil {
 		return err
 	}
 	defer statement.Close()
 
 	if _, err = statement.Exec(post.Title, post.Content, postId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repository Posts) DeletePost(postId uint64) error {
+	statement, err := repository.db.Prepare("delete from posts where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(postId); err != nil {
 		return err
 	}
 
