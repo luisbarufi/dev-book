@@ -239,3 +239,28 @@ func ListPostsByUser(w http.ResponseWriter, r *http.Request) {
 
 	response_handler.JSON(w, http.StatusOK, posts)
 }
+
+func LikePost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	postId, err := strconv.ParseUint(params["postId"], 10, 64)
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewPostsRepository(db)
+	if err = repository.LikePost(postId); err != nil {
+		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response_handler.JSON(w, http.StatusNoContent, nil)
+}
