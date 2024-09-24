@@ -3,9 +3,8 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
+	"webapp/src/response_handler"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -18,14 +17,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		"password": r.FormValue("password"),
 	})
 	if err != nil {
-		log.Fatal(err)
+		response_handler.JSON(w, http.StatusBadRequest, response_handler.ApiErr{Err: err.Error()})
+		return
 	}
 
 	response, err := http.Post("http://localhost:3333/users", "application/json", bytes.NewBuffer(user))
 	if err != nil {
-		log.Fatal(err)
+		response_handler.JSON(w, http.StatusInternalServerError, response_handler.ApiErr{Err: err.Error()})
+		return
 	}
 	defer response.Body.Close()
 
-	fmt.Println(response.Body)
+	if response.StatusCode >= 400 {
+		response_handler.HandleStatusCodeError(w, response)
+		return
+	}
+
+	response_handler.JSON(w, response.StatusCode, nil)
 }
