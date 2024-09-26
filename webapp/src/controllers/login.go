@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"webapp/src/response_handler"
+	"webapp/src/responseHandler"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -17,13 +17,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"password": r.FormValue("password"),
 	})
 	if err != nil {
-		response_handler.JSON(w, http.StatusBadRequest, response_handler.ApiErr{Err: err.Error()})
+		responseHandler.JSON(w, http.StatusBadRequest, responseHandler.ApiErr{Err: err.Error()})
 		return
 	}
 
 	response, err := http.Post("http://localhost:3333/login", "application/json", bytes.NewBuffer(user))
 	if err != nil {
-		response_handler.JSON(w, http.StatusInternalServerError, response_handler.ApiErr{Err: err.Error()})
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
 		return
 	}
 

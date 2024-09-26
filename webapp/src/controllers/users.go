@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"webapp/src/response_handler"
+	"webapp/src/responseHandler"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -17,21 +17,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		"password": r.FormValue("password"),
 	})
 	if err != nil {
-		response_handler.JSON(w, http.StatusBadRequest, response_handler.ApiErr{Err: err.Error()})
+		responseHandler.JSON(w, http.StatusBadRequest, responseHandler.ApiErr{Err: err.Error()})
 		return
 	}
 
 	response, err := http.Post("http://localhost:3333/users", "application/json", bytes.NewBuffer(user))
 	if err != nil {
-		response_handler.JSON(w, http.StatusInternalServerError, response_handler.ApiErr{Err: err.Error()})
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
 		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		response_handler.HandleStatusCodeError(w, response)
+		responseHandler.HandleStatusCodeError(w, response)
 		return
 	}
 
-	response_handler.JSON(w, response.StatusCode, nil)
+	responseHandler.JSON(w, response.StatusCode, nil)
 }
