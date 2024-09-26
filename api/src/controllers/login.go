@@ -5,7 +5,7 @@ import (
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
-	"api/src/response_handler"
+	"api/src/responseHandler"
 	"api/src/security"
 	"encoding/json"
 	"io"
@@ -16,19 +16,19 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
+		responseHandler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var user models.User
 	if err = json.Unmarshal(requestBody, &user); err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -36,22 +36,22 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewUserRepository(db)
 	savedUser, err := repository.SearchByEmail(user.Email)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	if err = security.VerifyPassword(savedUser.Password, user.Password); err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		responseHandler.ErrorHandler(w, http.StatusUnauthorized, err)
 		return
 	}
 
 	token, err := auth.CreateToken(savedUser.ID)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	userId := strconv.FormatUint(savedUser.ID, 10)
 
-	response_handler.JSON(w, http.StatusOK, models.AuthData{ID: userId, Token: token})
+	responseHandler.JSON(w, http.StatusOK, models.AuthData{ID: userId, Token: token})
 }

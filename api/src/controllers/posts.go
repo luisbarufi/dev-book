@@ -5,7 +5,7 @@ import (
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
-	"api/src/response_handler"
+	"api/src/responseHandler"
 	"encoding/json"
 	"errors"
 	"io"
@@ -18,32 +18,32 @@ import (
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.ExtractUserId(r)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		responseHandler.ErrorHandler(w, http.StatusUnauthorized, err)
 		return
 	}
 
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
+		responseHandler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var post models.Post
 	if err = json.Unmarshal(requestBody, &post); err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	post.Author_id = userId
 
 	if err = post.PrepareValidation(); err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -51,23 +51,23 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewPostsRepository(db)
 	post.ID, err = repository.Create(post)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusCreated, post)
+	responseHandler.JSON(w, http.StatusCreated, post)
 }
 
 func ListPosts(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.ExtractUserId(r)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		responseHandler.ErrorHandler(w, http.StatusUnauthorized, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -75,11 +75,11 @@ func ListPosts(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewPostsRepository(db)
 	posts, err := repository.ListPosts(userId)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusCreated, posts)
+	responseHandler.JSON(w, http.StatusCreated, posts)
 }
 
 func ShowPost(w http.ResponseWriter, r *http.Request) {
@@ -87,13 +87,13 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 
 	postId, err := strconv.ParseUint(params["postId"], 10, 64)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -101,7 +101,7 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewPostsRepository(db)
 	post, err := repository.FindById(postId)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -110,13 +110,13 @@ func ShowPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response_handler.JSON(w, http.StatusOK, post)
+	responseHandler.JSON(w, http.StatusOK, post)
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.ExtractUserId(r)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		responseHandler.ErrorHandler(w, http.StatusUnauthorized, err)
 		return
 	}
 
@@ -124,13 +124,13 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 	postId, err := strconv.ParseUint(params["postId"], 10, 64)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -138,44 +138,44 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewPostsRepository(db)
 	postSaved, err := repository.FindById(postId)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	if postSaved.Author_id != userId {
-		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível atualizar uma publicação que não seja sua"))
+		responseHandler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível atualizar uma publicação que não seja sua"))
 		return
 	}
 
 	requestBody, err := io.ReadAll(r.Body)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
+		responseHandler.ErrorHandler(w, http.StatusUnprocessableEntity, err)
 		return
 	}
 
 	var post models.Post
 	if err = json.Unmarshal(requestBody, &post); err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	if err = post.PrepareValidation(); err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	if err = repository.UpdatePost(postId, post); err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusNoContent, nil)
+	responseHandler.JSON(w, http.StatusNoContent, nil)
 }
 
 func DeletePost(w http.ResponseWriter, r *http.Request) {
 	userId, err := auth.ExtractUserId(r)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusUnauthorized, err)
+		responseHandler.ErrorHandler(w, http.StatusUnauthorized, err)
 		return
 	}
 
@@ -183,13 +183,13 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 
 	postId, err := strconv.ParseUint(params["postId"], 10, 64)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -197,21 +197,21 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewPostsRepository(db)
 	postSaved, err := repository.FindById(postId)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	if postSaved.Author_id != userId {
-		response_handler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível deletar uma publicação que não seja sua"))
+		responseHandler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível deletar uma publicação que não seja sua"))
 		return
 	}
 
 	if err = repository.DeletePost(postId); err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusNoContent, nil)
+	responseHandler.JSON(w, http.StatusNoContent, nil)
 }
 
 func ListPostsByUser(w http.ResponseWriter, r *http.Request) {
@@ -219,13 +219,13 @@ func ListPostsByUser(w http.ResponseWriter, r *http.Request) {
 
 	userId, err := strconv.ParseUint(params["userId"], 10, 64)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -233,11 +233,11 @@ func ListPostsByUser(w http.ResponseWriter, r *http.Request) {
 	repository := repositories.NewPostsRepository(db)
 	posts, err := repository.ListPostsByUser(userId)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusOK, posts)
+	responseHandler.JSON(w, http.StatusOK, posts)
 }
 
 func LikePost(w http.ResponseWriter, r *http.Request) {
@@ -245,24 +245,24 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 
 	postId, err := strconv.ParseUint(params["postId"], 10, 64)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
 
 	repository := repositories.NewPostsRepository(db)
 	if err = repository.LikePost(postId); err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusNoContent, nil)
+	responseHandler.JSON(w, http.StatusNoContent, nil)
 }
 
 func DisLikePost(w http.ResponseWriter, r *http.Request) {
@@ -270,22 +270,22 @@ func DisLikePost(w http.ResponseWriter, r *http.Request) {
 
 	postId, err := strconv.ParseUint(params["postId"], 10, 64)
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusBadRequest, err)
+		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
 		return
 	}
 
 	db, err := database.Connect()
 	if err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
 
 	repository := repositories.NewPostsRepository(db)
 	if err = repository.DisLikePost(postId); err != nil {
-		response_handler.ErrorHandler(w, http.StatusInternalServerError, err)
+		responseHandler.ErrorHandler(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response_handler.JSON(w, http.StatusNoContent, nil)
+	responseHandler.JSON(w, http.StatusNoContent, nil)
 }
