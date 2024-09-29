@@ -7,6 +7,11 @@ values
 
 insert into followers (user_id, follower_id)
 values
+(4, 1),
+(4, 2),
+(4, 3),
+(1, 4),
+(2, 4),
 (1, 2),
 (3, 1),
 (1, 3);
@@ -14,5 +19,9 @@ values
 insert into posts(title, content, author_id)
 values
 ("Publicação do Usuário 1", "Essa é a publicação do usuário 1! Oba!", 1),
+("Outra publicação do Usuário 1", "Essa é outra publicação do usuário 1! Oba!", 1),
 ("Publicação do Usuário 2", "Essa é a publicação do usuário 2! Oba!", 2),
-("Publicação do Usuário 3", "Essa é a publicação do usuário 3! Oba!", 3);
+("Outra publicação do Usuário 2", "Essa é a outra publicação do usuário 2! Oba!", 2),
+("Meu Post", "Este é meu Post", 4),
+("Publicação do Usuário 3", "Essa é a publicação do usuário 3! Oba!", 3),
+("Outra publicação do Usuário 3", "Essa é a outra publicação do usuário 3! Oba!", 3);
