@@ -37,9 +37,9 @@
             <div class="bg-body-secondary">
               <h2 class="display-4">{{ .Title }}</h2>
               <p class="lead">{{ .Content }}</p>
-              <a href="#">{{ .Author_nick }} - {{ .Created_at }}</a>
+              <a href="#">{{ .AuthorNick }} - {{ .CreatedAt }}</a>
               <hr class="my-4">
-              {{ if (eq .Author_id $.UserId) }}
+              {{ if (eq .AuthorId $.UserId) }}
                 <p>curtir | editar | excluir</p>
               {{ else }}
                 <p>curtir</p>
