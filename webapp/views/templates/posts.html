@@ -1,19 +1,19 @@
 {{ define "likes" }}
-  <span> {{ .Likes }} curtidas </span>
+  <span> <i class="fas fa-heart text-danger"></i> {{ .Likes }} </span>
 {{ end}}
 
 {{ define "edit" }}
-  | <a href="/editar">Editar Publicação</a>
+  <a href="/editar" style="text-decoration: none;"><i class="fas fa-edit"></i></a>
 {{ end}}
 
 {{ define "delete" }}
-  | <a href="/delete">Excluir Publicação</a>
+  <a href="/delete" style="text-decoration: none;"><i class="fas fa-trash"></i></a>
 {{ end}}
 
 {{ define "header-post"}}
   <h2 class="display-4">{{ .Title }}</h2>
   <p class="lead">{{ .Content }}</p>
-  <a href="#">{{ .AuthorNick }} - {{ .CreatedAt.Format "02/01/2006" }}</a>
+  <a href="#" style="text-decoration: none;">{{ .AuthorNick }} - {{ .CreatedAt.Format "02/01/2006" }}</a>
   <hr class="my-4">
 {{ end}}
 
