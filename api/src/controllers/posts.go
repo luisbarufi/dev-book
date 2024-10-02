@@ -34,7 +34,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post.Author_id = userId
+	post.AuthorId = userId
 
 	if err = post.PrepareValidation(); err != nil {
 		responseHandler.ErrorHandler(w, http.StatusBadRequest, err)
@@ -142,7 +142,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if postSaved.Author_id != userId {
+	if postSaved.AuthorId != userId {
 		responseHandler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível atualizar uma publicação que não seja sua"))
 		return
 	}
@@ -201,7 +201,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if postSaved.Author_id != userId {
+	if postSaved.AuthorId != userId {
 		responseHandler.ErrorHandler(w, http.StatusForbidden, errors.New("não é possível deletar uma publicação que não seja sua"))
 		return
 	}

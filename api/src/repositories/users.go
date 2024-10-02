@@ -59,7 +59,7 @@ func (repository Users) Search(searchParameter string) ([]models.User, error) {
 			&user.Name,
 			&user.Nick,
 			&user.Email,
-			&user.Created_at,
+			&user.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -88,7 +88,7 @@ func (repository Users) FindById(Id uint64) (models.User, error) {
 			&user.Name,
 			&user.Nick,
 			&user.Email,
-			&user.Created_at,
+			&user.CreatedAt,
 		); err != nil {
 			return models.User{}, err
 		}
@@ -190,7 +190,7 @@ func (repository Users) SearchFollowers(userId uint64) ([]models.User, error) {
 			&follower.Name,
 			&follower.Nick,
 			&follower.Email,
-			&follower.Created_at,
+			&follower.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -221,7 +221,7 @@ func (repository Users) SearchFollowing(userId uint64) ([]models.User, error) {
 			&user.Name,
 			&user.Nick,
 			&user.Email,
-			&user.Created_at,
+			&user.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

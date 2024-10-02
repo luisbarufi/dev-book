@@ -22,7 +22,7 @@ func (repository Posts) Create(post models.Post) (uint64, error) {
 	}
 	defer statement.Close()
 
-	result, err := statement.Exec(post.Title, post.Content, post.Author_id)
+	result, err := statement.Exec(post.Title, post.Content, post.AuthorId)
 	if err != nil {
 		return 0, err
 	}
@@ -52,10 +52,10 @@ func (repository Posts) FindById(postId uint64) (models.Post, error) {
 			&post.ID,
 			&post.Title,
 			&post.Content,
-			&post.Author_id,
+			&post.AuthorId,
 			&post.Likes,
-			&post.Created_at,
-			&post.Author_nick,
+			&post.CreatedAt,
+			&post.AuthorNick,
 		); err != nil {
 			return models.Post{}, err
 		}
@@ -83,10 +83,10 @@ func (repository Posts) ListPosts(userId uint64) ([]models.Post, error) {
 			&post.ID,
 			&post.Title,
 			&post.Content,
-			&post.Author_id,
+			&post.AuthorId,
 			&post.Likes,
-			&post.Created_at,
-			&post.Author_nick,
+			&post.CreatedAt,
+			&post.AuthorNick,
 		); err != nil {
 			return nil, err
 		}
@@ -144,10 +144,10 @@ func (repository Posts) ListPostsByUser(userId uint64) ([]models.Post, error) {
 			&post.ID,
 			&post.Title,
 			&post.Content,
-			&post.Author_id,
+			&post.AuthorId,
 			&post.Likes,
-			&post.Created_at,
-			&post.Author_nick,
+			&post.CreatedAt,
+			&post.AuthorNick,
 		); err != nil {
 			return nil, err
 		}
