@@ -1,0 +1,42 @@
+{{ define "likes" }}
+  <span> {{ .Likes }} curtidas </span>
+{{ end}}
+
+{{ define "edit" }}
+  | <a href="/editar">Editar Publicação</a>
+{{ end}}
+
+{{ define "delete" }}
+  | <a href="/delete">Excluir Publicação</a>
+{{ end}}
+
+{{ define "header-post"}}
+  <h2 class="display-4">{{ .Title }}</h2>
+  <p class="lead">{{ .Content }}</p>
+  <a href="#">{{ .AuthorNick }} - {{ .CreatedAt.Format "02/01/2006" }}</a>
+  <hr class="my-4">
+{{ end}}
+
+{{ define "post-with-permission"}}
+  <div class="p-4 mb-4 bg-body-secondary rounded-3" data-post-id="{{ .ID }}">
+    <div class="bg-body-secondary">
+      {{ template "header-post" . }}
+      <p>
+        {{ template "likes" . }}
+        {{ template "edit" . }}
+        {{ template "delete" . }}
+      </p>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "post-without-permission"}}
+  <div class="p-4 mb-4 bg-body-secondary rounded-3" data-post-id="{{ .ID }}">
+    <div class="bg-body-secondary">
+      {{ template "header-post" . }}
+      <p>
+        {{ template "likes" . }}
+      </p>
+    </div>
+  </div>
+{{ end }}
