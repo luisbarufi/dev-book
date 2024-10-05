@@ -30,4 +30,10 @@ var postsRoutes = []Route{
 		Function:               controllers.RenderEditPostView,
 		RequiresAuthentication: true,
 	},
+	{
+		URI:                    "/posts/{postId}",
+		Method:                 http.MethodPut,
+		Function:               controllers.EditPost,
+		RequiresAuthentication: true,
+	},
 }
