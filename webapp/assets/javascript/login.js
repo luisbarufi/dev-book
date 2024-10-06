@@ -13,6 +13,6 @@ function login(event) {
   }).done(function() {
     window.location = "/home";
   }).fail(function(err) {
-    alert("Usuário ou senha inválidos!");
+    toastr.warning('Usuário ou senha inválidos!');
   });
 }

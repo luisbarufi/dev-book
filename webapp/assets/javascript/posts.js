@@ -15,9 +15,14 @@ function createPost(event) {
       content: $('#content').val()
     }
   }).done(function() {
-    window.location = "/home";
+    toastr.success('Publicação criada com sucesso!');
+
+    setTimeout(function() {
+      window.location = "/home";
+    }, 2000);
+
   }).fail(function(err) {
-    alert("Erro ao criar a publicação!");
+    toastr.error('Erro ao criar a publicação!');
   });
 }
 
@@ -42,7 +47,7 @@ function likePost(event) {
     elementClicked.addClass('text-danger');
     elementClicked.removeClass('like-post');
   }).fail(function(err) {
-    alert("Erro ao curtir publicação!");
+    toastr.error('Erro ao curtir publicação!');
   }).always(function() {
     elementClicked.prop('disabled', false);
   });
@@ -69,7 +74,7 @@ function dislikePost(event) {
     elementClicked.removeClass('text-danger');
     elementClicked.addClass('like-post');
   }).fail(function(err) {
-    alert("Erro ao descurtir publicação!");
+    toastr.error('Erro ao descurtir publicação!');
   }).always(function() {
     elementClicked.prop('disabled', false);
   });
@@ -88,9 +93,14 @@ function updatePost() {
       content: $('#content').val()
     }
   }).done(function() {
-    alert("Publicação editada com sucesso!");
+    toastr.success('Publicação editada com sucesso!');
+
+    setTimeout(function() {
+      window.location = "/home";
+    }, 2000);
+
   }).fail(function() {
-    alert("Erro ao editar a publicação!");
+    toastr.success('Erro ao editar a publicação!');
   }).always(function() {
     $('#update-post').prop('disabled', false);
   });
@@ -104,17 +114,20 @@ function deletePost(event) {
   const postId = post.data('post-id');
 
   elementClicked.prop('disabled', true);
+  const confirmed = confirm("Tem certeza que deseja excluir?")
 
-  $.ajax({
-    url: `/posts/${postId}`,
-    method: 'DELETE',
-  }).done(function() {
-    post.fadeOut('slow', function() {
-      $(this).remove()
+  if (confirmed) {
+    $.ajax({
+      url: `/posts/${postId}`,
+      method: 'DELETE',
+    }).done(function() {
+      post.fadeOut('slow', function() {
+        $(this).remove()
+      });
+    }).fail(function() {
+      toastr.error('Erro ao excluir a publicação!');
+    }).always(function() {
+      elementClicked.prop('disabled', true);
     });
-  }).fail(function() {
-    alert("Erro ao excluir a publicação!");
-  }).always(function() {
-    elementClicked.prop('disabled', true);
-  });
+  }
 }

@@ -4,13 +4,13 @@ function createUser(event) {
   event.preventDefault();
 
   if ($('#password').val() != $('#password-confirmation').val()) {
-    alert("A senhas não coincidem!");
+    toastr.warning('As senhas não coincidem!');
 
     return 
   }
 
   $.ajax({
-    url: "/users",
+    url: '/users',
     method: 'POST',
     data: {
       name: $('#name').val(),
@@ -19,9 +19,22 @@ function createUser(event) {
       password: $('#password').val()
     }
   }).done(function() {
-    alert("Usuário cadastrado com sucesso!");
-  }).fail(function(err) {
-    console.log(err);
-    alert("Erro ao cadastrar usuário!");
+    toastr.success('Usuário cadastrado com sucesso!');
+
+    return $.ajax({
+      url: '/login',
+      method: 'POST',
+      data: {
+        email: $('#email').val(),
+        password: $('#password').val(),
+      }
+    }).done(function() {
+      window.location = "/home";
+    }).fail(function() {
+      toastr.error('Erro ao cadastrar usuário!');
+    });
+
+  }).fail(function() {
+    toastr.error('Erro ao cadastrar usuário!');
   });
 }

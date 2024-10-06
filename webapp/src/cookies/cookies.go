@@ -29,6 +29,8 @@ func Save(w http.ResponseWriter, Id, token string) error {
 		Value:    encodedData,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteDefaultMode,
 	})
 
 	return nil
