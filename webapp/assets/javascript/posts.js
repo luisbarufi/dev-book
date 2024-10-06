@@ -100,7 +100,7 @@ function updatePost() {
     }, 2000);
 
   }).fail(function() {
-    toastr.success('Erro ao editar a publicação!');
+    toastr.error('Erro ao editar a publicação!');
   }).always(function() {
     $('#update-post').prop('disabled', false);
   });
