@@ -124,6 +124,7 @@ function deletePost(event) {
       post.fadeOut('slow', function() {
         $(this).remove()
       });
+      toastr.success('Publicação excluida com sucesso!');
     }).fail(function() {
       toastr.error('Erro ao excluir a publicação!');
     }).always(function() {
