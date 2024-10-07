@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/models"
@@ -91,4 +92,29 @@ func RenderEditPostView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.ExecuteTemplate(w, "update-post.html", post)
+}
+
+func RenderSearchUsersView(w http.ResponseWriter, r *http.Request) {
+	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
+	url := fmt.Sprintf("%s/users?user=%s", config.ApiUrl, nameOrNick)
+
+	response, err := requests.SendAuthenticatedRequest(r, http.MethodGet, url, nil)
+	if err != nil {
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responseHandler.HandleStatusCodeError(w, response)
+		return
+	}
+
+	var users []models.User
+	if err := json.NewDecoder(response.Body).Decode(&users); err != nil {
+		responseHandler.JSON(w, http.StatusUnprocessableEntity, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+
+	utils.ExecuteTemplate(w, "users.html", users)
 }
