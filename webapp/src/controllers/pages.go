@@ -118,3 +118,16 @@ func RenderSearchUsersView(w http.ResponseWriter, r *http.Request) {
 
 	utils.ExecuteTemplate(w, "users.html", users)
 }
+
+func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	userId, err := strconv.ParseUint(params["userId"], 10, 64)
+	if err != nil {
+		responseHandler.JSON(w, http.StatusBadRequest, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+
+	user, err := models.UserData(userId, r)
+	fmt.Println(user, err)
+}
