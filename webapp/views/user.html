@@ -13,7 +13,7 @@
   {{ $FollowedByLoggedUser := false }}
 
   {{ range .User.Followers }}
-    {{ if (eq .ID $.User.ID)}}
+    {{ if (eq .ID $.LoggedUserId)}}
       {{ $FollowedByLoggedUser = true }}
     {{ end }}
   {{ end}}
@@ -30,13 +30,11 @@
             <p class="card-text"><a href="#">Seguidores {{ len .User.Followers }}</a></p>
             <p class="card-text"><a href="#">Seguindo {{ len .User.Following }}</a></p>
 
-            <a href="#" class="card-link" style="text-decoration: none;">
-              {{ if $FollowedByLoggedUser }}
-                <button id="follow" class="btn btn-info" data-user-id="{{ .User.ID }}">Seguir</button>
-              {{ else}}
-                <button id="unfollow" class="btn btn-info" data-user-id="{{ .User.ID }}">Parar de Seguir</button>
-              {{ end }}
-            </a>
+            {{ if $FollowedByLoggedUser }}
+              <button id="unfollow" class="btn btn-info" data-user-id="{{ .User.ID }}">Parar de Seguir</button>
+            {{ else}}
+              <button id="follow" class="btn btn-info" data-user-id="{{ .User.ID }}">Seguir</button>
+            {{ end }}
           </div>
         </div>
       </div>
@@ -65,5 +63,6 @@
   {{ template "scripts"}}
 
   <script src="/assets/javascript/posts.js"></script>
+  <script src="/assets/javascript/user.js"></script>
 </body>
 </html>

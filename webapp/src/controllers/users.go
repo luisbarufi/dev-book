@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
+	"webapp/src/requests"
 	"webapp/src/responseHandler"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +29,54 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	url := fmt.Sprintf("%s/users", config.ApiUrl)
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(user))
+	if err != nil {
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responseHandler.HandleStatusCodeError(w, response)
+		return
+	}
+
+	responseHandler.JSON(w, response.StatusCode, nil)
+}
+
+func Unfollow(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userId, err := strconv.ParseInt(params["userId"], 10, 64)
+	if err != nil {
+		responseHandler.JSON(w, http.StatusBadRequest, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/users/%d/unfollow", config.ApiUrl, userId)
+	response, err := requests.SendAuthenticatedRequest(r, http.MethodPost, url, nil)
+	if err != nil {
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responseHandler.HandleStatusCodeError(w, response)
+		return
+	}
+
+	responseHandler.JSON(w, response.StatusCode, nil)
+}
+
+func Follow(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userId, err := strconv.ParseInt(params["userId"], 10, 64)
+	if err != nil {
+		responseHandler.JSON(w, http.StatusBadRequest, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/users/%d/follow", config.ApiUrl, userId)
+	response, err := requests.SendAuthenticatedRequest(r, http.MethodPost, url, nil)
 	if err != nil {
 		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
 		return
