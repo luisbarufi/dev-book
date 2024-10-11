@@ -1,0 +1,24 @@
+{{ define "modal-followers" }}
+  <div class="modal fade" id="modal-followers">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seguidores</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {{ range .Followers }}
+            <a href="/users/{{ .ID }}">{{ .Nick }}</a> <br />
+          {{ else }}
+            <p class="text-muted text-center">
+              Nenhum seguidor por enquanto!
+            </p>
+          {{ end}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{{ end }}

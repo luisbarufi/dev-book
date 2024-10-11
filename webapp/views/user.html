@@ -27,8 +27,13 @@
             <h6 class="card-subtitle mb-2 text-muted">
               {{ .User.Name }} - {{ .User.Nick }} -  Membro desde: {{ .User.CreatedAt.Format "02/01/2006" }}
             </h6>
-            <p class="card-text"><a href="#">Seguidores {{ len .User.Followers }}</a></p>
-            <p class="card-text"><a href="#">Seguindo {{ len .User.Following }}</a></p>
+
+            <p class="card-text">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#modal-followers">Seguidores {{ len .User.Followers }}</a>
+            </p>
+            <p class="card-text">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#modal-following">Seguindo {{ len .User.Following }}</a>
+            </p>
 
             {{ if $FollowedByLoggedUser }}
               <button id="unfollow" class="btn btn-info" data-user-id="{{ .User.ID }}">Parar de Seguir</button>
@@ -58,10 +63,10 @@
     </div>
   </div>
 
+  {{ template "modal-followers" .User}}
+  {{ template "modal-following" .User}}
   {{ template "footer"}}
-
   {{ template "scripts"}}
-
   <script src="/assets/javascript/posts.js"></script>
   <script src="/assets/javascript/user.js"></script>
 </body>
