@@ -21,8 +21,8 @@ type User struct {
 	Posts     []Post    `json:"posts"`
 }
 
-// UserData makes 4 API requests to assemble the user data.
-func UserData(userId uint64, r *http.Request) (User, error) {
+// FetchAllUserData makes 4 API requests to assemble the user data.
+func FetchAllUserData(userId uint64, r *http.Request) (User, error) {
 	channelUser := make(chan User)
 	channelFollowers := make(chan []User)
 	channelFollowing := make(chan []User)

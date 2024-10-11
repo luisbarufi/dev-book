@@ -135,7 +135,7 @@ func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/profile", http.StatusFound)
 	}
 
-	user, err := models.UserData(userId, r)
+	user, err := models.FetchAllUserData(userId, r)
 	if err != nil {
 		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
 		return
@@ -155,7 +155,7 @@ func RenderLoggedUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	userId, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
-	user, err := models.UserData(userId, r)
+	user, err := models.FetchAllUserData(userId, r)
 	if err != nil {
 		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
 		return
