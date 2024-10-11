@@ -128,14 +128,18 @@ func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cookie, _ := cookies.Read(r)
+	loggedUserId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	if userId == loggedUserId {
+		http.Redirect(w, r, "/profile", http.StatusFound)
+	}
+
 	user, err := models.UserData(userId, r)
 	if err != nil {
 		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
 		return
 	}
-
-	cookie, _ := cookies.Read(r)
-	loggedUserId, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
 	utils.ExecuteTemplate(w, "user.html", struct {
 		User         models.User
@@ -144,4 +148,18 @@ func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
 		User:         user,
 		LoggedUserId: loggedUserId,
 	})
+}
+
+func RenderLoggedUserProfile(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Read(r)
+
+	userId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	user, err := models.UserData(userId, r)
+	if err != nil {
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: err.Error()})
+		return
+	}
+
+	utils.ExecuteTemplate(w, "profile.html", user)
 }
