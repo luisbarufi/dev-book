@@ -39,7 +39,7 @@
               </div>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-4 mb-4">
               <div class="col-12">
                 <div class="card">
                   <div class="card-body">
@@ -54,6 +54,11 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <a id="delete-user" class="card-link mt-4" style="text-decoration: none;">
+              <button class="btn btn-info">Excluir Conta</button>
+            </a>
           </div>
         </div>
       </div>
@@ -65,5 +70,6 @@
   {{ template "modal-following" . }}
   {{ template "scripts"}}
   <script src="/assets/javascript/posts.js"></script>
+  <script src="/assets/javascript/user.js"></script>
 </body>
 </html>

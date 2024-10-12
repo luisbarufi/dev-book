@@ -2,6 +2,7 @@ $('#unfollow').on('click', unfollow);
 $('#follow').on('click', follow);
 $('#edit-user').on('submit', edit);
 $('#update-password').on('submit', updatePassword);
+$('#delete-user').on('click', deleteUser);
 
 function unfollow() {
   const userId = $(this).data('user-id');
@@ -76,4 +77,20 @@ function updatePassword(event) {
   }).fail(function() {
     toastr.error('Oops! Erro ao atualizar a senha!');
   });
+}
+
+function deleteUser() {
+  const confirmed = confirm("Tem certeza que deseja apagar a sua conta? Essa é uma ação irreversivel!");
+
+  if (confirmed) {
+    $.ajax({
+      url: '/delete-user',
+      method: 'DELETE',
+    }).done(function() {
+      alert("Seu usuário foi excluido com sucesso!");
+      window.location = "/logout";
+    }).fail(function() {
+      toastr.error('Oops! Erro ao excluir a usuário!');
+    });
+  }
 }
