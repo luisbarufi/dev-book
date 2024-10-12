@@ -138,6 +138,11 @@ func FetchFollowing(channel chan<- []User, userId uint64, r *http.Request) {
 		return
 	}
 
+	if following == nil {
+		channel <- make([]User, 0)
+		return
+	}
+
 	channel <- following
 }
 
