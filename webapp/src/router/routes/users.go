@@ -5,7 +5,7 @@ import (
 	"webapp/src/controllers"
 )
 
-var usersRoutes = []Route{
+var users = []Route{
 	{
 		URI:                    "/create-user",
 		Method:                 http.MethodGet,

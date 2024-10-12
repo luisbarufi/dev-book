@@ -5,7 +5,7 @@ import (
 	"webapp/src/controllers"
 )
 
-var postsRoutes = []Route{
+var posts = []Route{
 	{
 		URI:                    "/posts",
 		Method:                 http.MethodPost,
