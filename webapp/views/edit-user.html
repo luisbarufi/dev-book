@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevBook - Editar Usuário</title>
+  <link rel="stylesheet" href="/assets/css/bootstrap.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+</head>
+<body>
+
+  {{ template "navbar"}}
+
+  <div class="container-fluid">
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Editar Dados</h5>
+
+            <form id="edit-user">
+              <div class="mb-3">
+                <label class="form-label" for="name">Nome</label>
+                <input type="text" class="form-control" name="name" id="name" value="{{ .Name }}" required="required">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label" for="nick">Nome</label>
+                <input type="text" class="form-control" name="nick" id="nick" value="{{ .Nick }}" required="required">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <input type="text" class="form-control" name="email" id="email" value="{{ .Email }}" required="required">
+              </div>
+
+              <button class="btn btn-info" type="submit">Atualizar Dados</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ template "footer"}}
+
+  {{ template "scripts"}}
+  <script src="/assets/javascript/user.js"></script>
+</body>
+</html>

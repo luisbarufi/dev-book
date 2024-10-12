@@ -163,3 +163,18 @@ func RenderLoggedUserProfile(w http.ResponseWriter, r *http.Request) {
 
 	utils.ExecuteTemplate(w, "profile.html", user)
 }
+
+func RenderUserEditView(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Read(r)
+	userId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+	channel := make(chan models.User)
+
+	go models.FetchUserData(channel, userId, r)
+	user := <-channel
+	if user.ID == 0 {
+		responseHandler.JSON(w, http.StatusInternalServerError, responseHandler.ApiErr{Err: "erro ao buscar o usuário"})
+		return
+	}
+
+	utils.ExecuteTemplate(w, "edit-user.html", user)
+}
