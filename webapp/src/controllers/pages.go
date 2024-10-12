@@ -178,3 +178,7 @@ func RenderUserEditView(w http.ResponseWriter, r *http.Request) {
 
 	utils.ExecuteTemplate(w, "edit-user.html", user)
 }
+
+func RenderUserUpdatePasswordView(w http.ResponseWriter, r *http.Request) {
+	utils.ExecuteTemplate(w, "update-password.html", nil)
+}

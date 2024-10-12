@@ -1,6 +1,7 @@
 $('#unfollow').on('click', unfollow);
 $('#follow').on('click', follow);
 $('#edit-user').on('submit', edit);
+$('#update-password').on('submit', updatePassword);
 
 function unfollow() {
   const userId = $(this).data('user-id');
@@ -50,5 +51,29 @@ function edit(event) {
       }, 2000);
   }).fail(function() {
     toastr.error('Oops! Erro ao atualizar o usuário!');
+  });
+}
+
+function updatePassword(event) {
+  event.preventDefault();
+
+  if ($('#new-password').val() !== $("#confirm-password").val()) {
+    toastr.warning('Oops! As senhas não coincidem!');
+  }
+
+  $.ajax({
+    url: '/update-password',
+    method: 'POST',
+    data: {
+      currentPassword: $('#current-password').val(),
+      newPassword: $('#new-password').val(),
+    }
+  }).done(function() {
+    toastr.success('Senha foi atualizada com sucesso!');
+      setTimeout(function() {
+        window.location = "/profile";
+      }, 2000);
+  }).fail(function() {
+    toastr.error('Oops! Erro ao atualizar a senha!');
   });
 }

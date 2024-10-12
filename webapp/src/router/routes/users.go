@@ -60,4 +60,16 @@ var users = []Route{
 		Function:               controllers.EditUser,
 		RequiresAuthentication: true,
 	},
+	{
+		URI:                    "/update-password",
+		Method:                 http.MethodGet,
+		Function:               controllers.RenderUserUpdatePasswordView,
+		RequiresAuthentication: true,
+	},
+	{
+		URI:                    "/update-password",
+		Method:                 http.MethodPost,
+		Function:               controllers.UpdatePassword,
+		RequiresAuthentication: true,
+	},
 }
